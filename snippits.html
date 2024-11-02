@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VBA Snippet Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body id="body">
+    <nav>
+        <h1>Snippit Manager</h1>
+        <ul id="nav-links"></ul> 
+    </nav>
+    <div id="container">
+        <h2>Select Snippet</h2>
+        <select id="snippet-dropdown">
+            <option value="">--Select a Snippet--</option>
+        </select>
+        <button id="copy-button" disabled>Copy Code</button>
+        <h2>Snippet Code</h2>
+        <div id="vbaCode"></div>
+    </div>
+    <div id="footer"></div>
+    <script src="common_script.js"></script>
+    <script src="snippits.js"></script>
+</body>
+</html>

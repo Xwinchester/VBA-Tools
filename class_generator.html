@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body id="body">
+    <nav>
+        <h1>Class Generator</h1>
+        <ul id="nav-links"></ul> 
+    </nav>
+       
+    <div id="container">
+        <label for="className">Enter name of VBA class:</label>
+        <input type="text" id="className" placeholder="Class Name">
+        
+        <label for="varType">Select variable type:</label>
+        <select id="varType">
+            <option value="String">String</option>
+            <option value="Integer">Integer</option>
+            <option value="Double">Double</option>
+            <option value="Long">Long</option>
+            <option value="Boolean">Boolean</option>
+            <option value="Date">Date</option>
+        </select>
+
+        <button id="addClassButton">Add Class</button>
+        <button id="resetButton">Reset</button>
+        <button id="copyButton">Copy Code</button>
+
+        <h2>Added Classes:</h2>
+        <div id="classList" class="class-list"></div>
+
+        <h2>Generated VBA Code:</h2>
+        <div id="vbaCode"></div>
+    </div>
+    <div id="footer"></div>
+    <script src="common_script.js"></script>
+    <script src="class_generator.js"></script>
+</body>
+</html>
