@@ -1,46 +1,46 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background-color: #121212; /* Dark mode background */
-    color: #ffffff; /* Light text color for dark mode */
+    background-color: #121212;
+    color: #ffffff;
 }
 
-/* Navigation Bar */
 nav {
-    background-color: #007bff; /* Navigation bar background */
+    background-color: #007bff;
     padding: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Shadow for nav */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    text-align: center;
 }
 
 nav h1 {
-    display: inline; /* Align title inline with links */
-    margin-right: 20px; /* Space between title and links */
+    display: inline;
+    margin-right: 20px;
 }
 
 nav ul {
-    list-style-type: none; /* Remove bullet points from the list */
-    padding: 0; /* Remove padding from the list */
-    margin: 0; /* Remove margin from the list */
-    display: inline; /* Align links inline */
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: inline;
 }
 
 nav li {
-    display: inline; /* Display list items inline */
-    margin-right: 15px; /* Space between links */
+    display: inline;
+    margin-right: 15px;
 }
 
 nav a {
-    text-decoration: none; /* Remove underline from links */
-    color: #333; /* Text color */
-    padding: 8px 15px; /* Padding around links */
-    border-radius: 5px; /* Rounded corners */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow effect */
-    transition: background-color 0.5s, color 0.5s; /* Smooth transitions */
+    text-decoration: none;
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.5s, color 0.5s;
 }
 
 nav a:hover {
-    background-color: #00a2ffbb; /* Background color on hover */
-    color: white; /* Text color on hover */
+    background-color: #00a2ffbb;
+    color: white;
 }
 
 #container {
@@ -49,60 +49,48 @@ nav a:hover {
 
 #vbaCode {
     white-space: pre;
-    background: #2e2e2e; /* Darker code background */
+    background: #2e2e2e;
     padding: 10px;
     border: 1px solid #444;
     border-radius: 4px;
-    overflow: auto; /* Allow scrolling */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Shadow for code block */
+    overflow: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 input[type="text"], select {
-    width: 300px;
+    width: 100%;
+    max-width: 300px;
     padding: 5px;
     border: 1px solid #444;
-    background: #1e1e1e; /* Dark input background */
-    color: #ffffff; /* Light text color */
-    border-radius: 4px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Shadow for input */
-    margin-right: 10px; /* Add some space between input and dropdown */
+    background: #1e1e1e;
+    color: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    margin-right: 10px;
 }
 
 button {
     margin-top: 10px;
     padding: 5px 10px;
-    background: #007bff; /* Button background */
+    background: #007bff;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Shadow for buttons */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 button:hover {
-    background: #0056b3; /* Button hover effect */
+    background: #0056b3;
 }
 
 .class-list {
     margin-top: 10px;
     padding: 10px;
-    background: #2e2e2e; /* Darker background for class list */
+    background: #2e2e2e;
     border: 1px solid #444;
     border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Shadow for class list */
-}
-
-pre {
-    background: white;
-    padding: 10px;
-    border: 1px solid #ddd;
-    overflow: auto;
-    white-space: pre-wrap; /* Wrap long lines */
-}
-
-.code-display {
-    max-height: 300px;
-    overflow-y: auto; /* Enable vertical scrolling */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 .footer {
@@ -113,12 +101,47 @@ pre {
     position: relative;
     bottom: 0;
     width: 100%;
-    font-family: 'Times New Roman', Times, serif; /* Times New Roman font */
-    font-style: italic; /* Italic style */
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Box shadow */
+    font-family: 'Times New Roman', Times, serif;
+    font-style: italic;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 .footer-text {
     margin: 5px 0;
 }
 
+@media (max-width: 768px) {
+    nav ul {
+        display: block;
+        text-align: center;
+    }
+
+    nav h1 {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    nav li {
+        display: block;
+        margin: 5px 0;
+    }
+
+    #container {
+        padding: 10px;
+    }
+
+    #vbaCode {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    input[type="text"], select {
+        width: 100%;
+        max-width: none;
+        margin-bottom: 10px;
+    }
+
+    .footer {
+        padding: 15px;
+    }
+}
