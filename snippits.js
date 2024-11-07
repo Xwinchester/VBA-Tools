@@ -176,6 +176,82 @@ Public Sub UpdateLastLoadTime()
 End Sub
 `;
 
+const SetupMain = `
+Option Explicit
+
+Sub gui()
+    Call LoadScheduleData
+    MyForm.Show
+End Sub
+
+Sub LoadScheduleData()
+    ' Check if ScheduleManager is initialized
+    If ScheduleManager Is Nothing Then
+        ' Initialize the ScheduleManager
+        Set ScheduleManager = New clsEntryManager
+        ' Load the data initially
+        LoadData
+    Else
+        ' If ScheduleManager is already initialized, check if reload is required
+        If ScheduleManager.IsReloadRequired Then
+            Set ScheduleManager = New clsEntryManager
+            Debug.Print "5 minutes have passed. Reloading data..."
+            LoadData
+        Else
+            Debug.Print "Data retrieved from existing ScheduleManager cache"
+        End If
+    End If
+    
+    ' Call function to check entry count
+    Call CheckEntryCount
+End Sub
+
+' Method to load the data into ScheduleManager
+Private Sub LoadData()
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim row As Range
+    Dim entry As clsEntry
+
+    ' Set the worksheet where data is stored
+    Set ws = ThisWorkbook.Sheets("Sheet1")
+    
+    ' Find the last row in column A with data
+    lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).row
+
+    ' Loop through each row starting from row 2 (assuming row 1 has headers)
+    For Each row In ws.Range("A2:C" & lastRow).Rows
+        Set entry = New clsEntry
+        entry.AddFromRow row
+        ScheduleManager.Add entry
+    Next row
+    
+    ' Update the timestamp of the last load
+    ScheduleManager.UpdateLastLoadTime
+    
+    Debug.Print "Data loaded into ScheduleManager from worksheet"
+End Sub
+
+
+' Subroutine to display the count of entries in ScheduleManager
+Sub CheckEntryCount()
+    If ScheduleManager Is Nothing Then
+        Debug.Print "ScheduleManager is not initialized."
+    Else
+        Debug.Print "Total entries in ScheduleManager:", ScheduleManager.Count
+    End If
+End Sub
+
+' Subroutine to list all entries currently stored in ScheduleManager
+Sub ListAllEntries()
+    If ScheduleManager Is Nothing Then
+        Debug.Print "ScheduleManager is not initialized."
+    Else
+        ScheduleManager.ListSchedules
+    End If
+End Sub
+`;
+
 // Group the snippets in an object
 const snippets = {
     "Hello World": snippet1,
@@ -192,6 +268,7 @@ const snippets = {
     "Loop Through Range": loopThroughRange,
     "Loop Through Column": loopThroughColumn,
     "Class Manager": ClassManager,
+    "Setup Main": SetupMain,
 };
 
 // Initialize the snippet manager
