@@ -113,6 +113,69 @@ const loopThroughColumn = `Sub LoopThroughColumn(sheetName As String, col As Str
 End Sub
 `;
 
+const ClassManager = `
+' In Class Module: ScheduleManager
+Private pSchedules As Collection
+Private pLastLoadTime As Date
+
+' Initialize the collection and timestamp when ScheduleManager is created
+Private Sub Class_Initialize()
+    Set pSchedules = New Collection
+    pLastLoadTime = Now
+End Sub
+
+' Method to Add a clsEntry entry
+Public Sub Add(ByVal entry As clsEntry)
+    ' Add clsEntry to collection
+    pSchedules.Add entry
+    Me.UpdateLastLoadTime
+End Sub
+
+' Method to Retrieve a clsEntry entry by index
+Public Function GetSchedule(ByVal index As Long) As clsEntry
+    If index > 0 And index <= pSchedules.Count Then
+        Set GetSchedule = pSchedules(index)
+    Else
+        Set GetSchedule = Nothing
+    End If
+End Function
+
+' Method to List All Entries
+Public Sub ListSchedules()
+    Dim i As Long
+    Dim schedule As clsEntry
+    For i = 1 To pSchedules.Count
+        Set schedule = pSchedules(i)
+        Debug.Print "Entry " & i & ":"
+        schedule.PrintAll
+    Next i
+End Sub
+
+' Method to Get Total Number of Entries
+Public Property Get Count() As Long
+    Count = pSchedules.Count
+End Property
+
+' Property to Get LastLoaded Timestamp
+Public Property Get LastLoaded() As Date
+    LastLoaded = pLastLoaded
+End Property
+
+' Method to check if it's time to reload (5 minutes interval)
+Public Function IsReloadRequired() As Boolean
+    If (Now - pLastLoadTime) * 1440 >= 5 Then
+        IsReloadRequired = True
+    Else
+        IsReloadRequired = False
+    End If
+End Function
+
+' Method to update the last load timestamp
+Public Sub UpdateLastLoadTime()
+    pLastLoadTime = Now
+End Sub
+`;
+
 // Group the snippets in an object
 const snippets = {
     "Hello World": snippet1,
@@ -128,6 +191,7 @@ const snippets = {
     "Get Last Row Index": getLastRowIndex,
     "Loop Through Range": loopThroughRange,
     "Loop Through Column": loopThroughColumn,
+    "Class Manager": ClassManager,
 };
 
 // Initialize the snippet manager
