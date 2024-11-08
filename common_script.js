@@ -2,7 +2,7 @@ function BuildNavbar() {
     // Array of navigation links
     const navLinks = [
         { text: 'Class Generator', url: 'index.html' },
-        { text: 'Snippit Manager', url: 'snippits.html' }
+        { text: 'Snippet Manager', url: 'snippits.html' }
         // Add more links as needed
     ];
 
