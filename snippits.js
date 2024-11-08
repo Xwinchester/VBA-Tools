@@ -179,11 +179,12 @@ Public Function GetSchedule(ByVal index As Long) As clsEntry
     End If
 End Function
 
-' Find a schedule entry by a unique identifier (assumes clsEntry has an ID property)
-Public Function FindEntry(ByVal id As String) As clsEntry
+
+' Find a schedule entry by job number and op number
+Public Function FindEntry(ByVal JobNumber As String, ByVal OpNumber As String) As clsEntry
     Dim entry As clsEntry
     For Each entry In pSchedules
-        If entry.id = id Then
+        If entry.JobNumber = JobNumber And entry.OpNumber = OpNumber Then
             Set FindEntry = entry
             Exit Function
         End If
