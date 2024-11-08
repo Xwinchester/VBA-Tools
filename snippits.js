@@ -114,24 +114,63 @@ End Sub
 `;
 
 const ClassManager = `
-' In Class Module: ScheduleManager
+' Private variables
 Private pSchedules As Collection
 Private pLastLoadTime As Date
+Private pMinutesRequiredToReload As Long
+Private pSheetName As String
 
-' Initialize the collection and timestamp when ScheduleManager is created
+' Initialize the ScheduleManager with default values
 Private Sub Class_Initialize()
     Set pSchedules = New Collection
     pLastLoadTime = Now
+    pMinutesRequiredToReload = 5
+    pSheetName = "Sheet1"
 End Sub
 
-' Method to Add a clsEntry entry
+' Clean up resources on termination
+Private Sub Class_Terminate()
+    Set pSchedules = Nothing
+End Sub
+
+' --- Properties ---
+
+' Get or Set the sheet name for data loading
+Public Property Get SheetName() As String
+    SheetName = pSheetName
+End Property
+
+Public Property Let SheetName(value As String)
+    pSheetName = value
+End Property
+
+' Get or Set the reload interval in minutes
+Public Property Get MinutesRequiredToReload() As Long
+    MinutesRequiredToReload = pMinutesRequiredToReload
+End Property
+
+Public Property Let MinutesRequiredToReload(value As Long)
+    pMinutesRequiredToReload = value
+End Property
+
+' Get the count of schedule entries
+Public Property Get Count() As Long
+    Count = pSchedules.Count
+End Property
+
+' Get the timestamp of the last load
+Public Property Get LastLoaded() As Date
+    LastLoaded = pLastLoadTime
+End Property
+
+' --- Methods ---
+
+' Add a new schedule entry to the collection
 Public Sub Add(ByVal entry As clsEntry)
-    ' Add clsEntry to collection
     pSchedules.Add entry
-    Me.UpdateLastLoadTime
 End Sub
 
-' Method to Retrieve a clsEntry entry by index
+' Retrieve a schedule entry by index (1-based)
 Public Function GetSchedule(ByVal index As Long) As clsEntry
     If index > 0 And index <= pSchedules.Count Then
         Set GetSchedule = pSchedules(index)
@@ -140,63 +179,95 @@ Public Function GetSchedule(ByVal index As Long) As clsEntry
     End If
 End Function
 
-' Method to List All Entries
+' Find a schedule entry by a unique identifier (assumes clsEntry has an ID property)
+Public Function FindEntry(ByVal id As String) As clsEntry
+    Dim entry As clsEntry
+    For Each entry In pSchedules
+        If entry.id = id Then
+            Set FindEntry = entry
+            Exit Function
+        End If
+    Next entry
+    Set FindEntry = Nothing
+End Function
+
+' Clear all entries from the collection
+Public Sub Clear()
+    Set pSchedules = New Collection
+    Me.UpdateLastLoadTime
+End Sub
+
+' Check if reloading is required based on the time interval
+Public Function IsReloadRequired() As Boolean
+    IsReloadRequired = (Now - pLastLoadTime) * 1440 >= pMinutesRequiredToReload
+End Function
+
+' Update the timestamp for last load time
+Public Sub UpdateLastLoadTime()
+    pLastLoadTime = Now
+End Sub
+
+
+' Load data from the specified sheet into the collection
+Public Sub LoadData()
+    On Error GoTo ErrorHandler
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim row As Range
+    Dim entry As clsEntry
+    
+    ' Clear existing schedules before loading new data
+    Me.Clear
+    
+    ' Set the worksheet and find the last row
+    Set ws = ThisWorkbook.Sheets(Me.SheetName)
+    lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).row
+    
+    ' Load each row of data into a new clsEntry and add to collection
+    For Each row In ws.Range("A2:C" & lastRow).Rows
+        Set entry = New clsEntry
+        entry.AddFromRow row   ' Assumes clsEntry has AddFromRow method
+        Me.Add entry
+    Next row
+    
+    ' Update last load time after successful load
+    Me.UpdateLastLoadTime
+    Exit Sub
+
+ErrorHandler:
+    Debug.Print "Error in LoadData: " & Err.Description
+End Sub
+
+' List all entries (for debugging purposes)
 Public Sub ListSchedules()
     Dim i As Long
     Dim schedule As clsEntry
     For i = 1 To pSchedules.Count
         Set schedule = pSchedules(i)
         Debug.Print "Entry " & i & ":"
-        schedule.PrintAll
+        schedule.PrintAll   ' Assumes clsEntry has a PrintAll method
     Next i
-End Sub
-
-' Method to Get Total Number of Entries
-Public Property Get Count() As Long
-    Count = pSchedules.Count
-End Property
-
-' Property to Get LastLoaded Timestamp
-Public Property Get LastLoaded() As Date
-    LastLoaded = pLastLoaded
-End Property
-
-' Method to check if it's time to reload (5 minutes interval)
-Public Function IsReloadRequired() As Boolean
-    If (Now - pLastLoadTime) * 1440 >= 5 Then
-        IsReloadRequired = True
-    Else
-        IsReloadRequired = False
-    End If
-End Function
-
-' Method to update the last load timestamp
-Public Sub UpdateLastLoadTime()
-    pLastLoadTime = Now
 End Sub
 `;
 
 const SetupMain = `
 Option Explicit
 
-Sub gui()
-    Call LoadScheduleData
-    MyForm.Show
-End Sub
-
 Sub LoadScheduleData()
     ' Check if ScheduleManager is initialized
     If ScheduleManager Is Nothing Then
         ' Initialize the ScheduleManager
+        Debug.Print "Adding Data to ScheduleManager cache"
         Set ScheduleManager = New clsEntryManager
         ' Load the data initially
-        LoadData
+        ScheduleManager.LoadData
     Else
         ' If ScheduleManager is already initialized, check if reload is required
         If ScheduleManager.IsReloadRequired Then
             Set ScheduleManager = New clsEntryManager
-            Debug.Print "5 minutes have passed. Reloading data..."
-            LoadData
+            
+            Debug.Print ScheduleManager.MinutesRequiredToReload & " minutes have passed. Reloading data..."
+            ScheduleManager.LoadData
         Else
             Debug.Print "Data retrieved from existing ScheduleManager cache"
         End If
@@ -204,32 +275,6 @@ Sub LoadScheduleData()
     
     ' Call function to check entry count
     Call CheckEntryCount
-End Sub
-
-' Method to load the data into ScheduleManager
-Private Sub LoadData()
-    Dim ws As Worksheet
-    Dim lastRow As Long
-    Dim row As Range
-    Dim entry As clsEntry
-
-    ' Set the worksheet where data is stored
-    Set ws = ThisWorkbook.Sheets("Sheet1")
-    
-    ' Find the last row in column A with data
-    lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).row
-
-    ' Loop through each row starting from row 2 (assuming row 1 has headers)
-    For Each row In ws.Range("A2:C" & lastRow).Rows
-        Set entry = New clsEntry
-        entry.AddFromRow row
-        ScheduleManager.Add entry
-    Next row
-    
-    ' Update the timestamp of the last load
-    ScheduleManager.UpdateLastLoadTime
-    
-    Debug.Print "Data loaded into ScheduleManager from worksheet"
 End Sub
 
 
@@ -250,6 +295,7 @@ Sub ListAllEntries()
         ScheduleManager.ListSchedules
     End If
 End Sub
+
 `;
 
 // Group the snippets in an object
