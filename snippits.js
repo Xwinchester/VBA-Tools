@@ -1,117 +1,87 @@
 // Define individual VBA snippets
-const snippet1 = `Sub HelloWorld()
-    MsgBox "Hello, World!"
+const sub_template = `Sub MySubroutine()
+    ' Description: Replace with a short description of what this code does
+    On Error GoTo ErrorHandler
+    
+    ' Your code here
+    
+    Exit Sub
+ErrorHandler:
+    MsgBox "Error: " & Err.Description
 End Sub
 `;
 
-const snippet2 = `Function AddNumbers(a As Integer, b As Integer) As Integer
-    AddNumbers = a + b
+const function_template = `Function MyFunction(ByVal inputValue As Variant) As Variant
+    ' Description: Replace with a short description of the function's purpose
+    On Error GoTo ErrorHandler
+    
+    ' Your code here
+    
+    MyFunction = inputValue ' Replace with your return value
+    Exit Function
+ErrorHandler:
+    MsgBox "Error: " & Err.Description
+    MyFunction = CVErr(xlErrValue) ' Return an error value
 End Function
+
 `;
 
-const snippet3 = `Sub LoopThroughCells()
+const add_sheet = `Sub AddSheet(sheetName As String)
+    Dim ws As Worksheet
+    Set ws = Worksheets.Add
+    ws.Name = sheetName
+End Sub
+
+`;
+
+const delete_sheet = `Sub DeleteSheet(sheetName As String)
+    Application.DisplayAlerts = False
+    Worksheets(sheetName).Delete
+    Application.DisplayAlerts = True
+End Sub
+
+`;
+
+const loop_worksheets = `Sub LoopThroughSheets()
+    Dim ws As Worksheet
+    For Each ws In ThisWorkbook.Worksheets
+        Debug.Print ws.Name ' Replace with your desired operation
+    Next ws
+End Sub
+
+`;
+
+const set_cell_value = `Sub SetCellValue(sheetName As String, cellAddress As String, value As Variant)
+    Worksheets(sheetName).Range(cellAddress).Value = value
+End Sub
+
+`;
+
+const loop_range = `Sub LoopThroughRange()
     Dim cell As Range
     For Each cell In Range("A1:A10")
-        cell.Value = cell.Value * 2
+        Debug.Print cell.Value ' Replace with your desired operation
     Next cell
 End Sub
+
 `;
 
-const snippet4 = `Sub FormatCells()
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("Sheet1")
-    With ws.Range("A1:A10")
-        .Font.Bold = True
-        .Interior.Color = RGB(255, 255, 0) ' Yellow background
+const find_and_replace = `Sub FindReplace(sheetName As String, findText As String, replaceText As String)
+    Worksheets(sheetName).Cells.Replace What:=findText, Replacement:=replaceText, LookAt:=xlPart
+End Sub
+
+`;
+
+const sort_range = `Sub SortRange(sheetName As String, sortRange As String, sortKey As String)
+    With Worksheets(sheetName).Sort
+        .SetRange Range(sortRange)
+        .SortFields.Clear
+        .SortFields.Add Key:=Range(sortKey), Order:=xlAscending
+        .Header = xlYes
+        .Apply
     End With
 End Sub
-`;
-
-const snippet5 = `Sub AutoFitColumns()
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("Sheet1")
-    ws.Columns.AutoFit
-End Sub
-`;
-
-const snippet6 = `Sub CopyRange()
-    Dim sourceRange As Range
-    Dim targetRange As Range
-    Set sourceRange = ThisWorkbook.Sheets("Sheet1").Range("A1:A10")
-    Set targetRange = ThisWorkbook.Sheets("Sheet2").Range("A1")
-    sourceRange.Copy Destination:=targetRange
-End Sub
-`;
-
-const snippet7 = `Sub DeleteEmptyRows()
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("Sheet1")
-    Dim i As Long
-    For i = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row To 1 Step -1
-        If Application.WorksheetFunction.CountA(ws.Rows(i)) = 0 Then
-            ws.Rows(i).Delete
-        End If
-    Next i
-End Sub
-`;
-
-const snippet8 = `Sub CreateChart()
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("Sheet1")
-    Dim chartObj As ChartObject
-    Set chartObj = ws.ChartObjects.Add(Left:=100, Width:=375, Top:=50, Height:=225)
-    With chartObj.Chart
-        .SetSourceData Source:=ws.Range("A1:B10")
-        .ChartType = xlColumnClustered
-        .HasTitle = True
-        .ChartTitle.Text = "Sample Chart"
-    End With
-End Sub
-`;
-
-const snippet9 = `Sub FindAndReplace()
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("Sheet1")
-    ws.Cells.Replace What:="OldValue", Replacement:="NewValue", LookAt:=xlPart
-End Sub
-`;
-
-const snippet10 = `Function GetSumOfRange(rng As Range) As Double
-    GetSumOfRange = Application.WorksheetFunction.Sum(rng)
-End Function
-`;
-
-// Additional useful VBA snippets
-const getLastRowIndex = `Function GetLastRowIndex(sheetName As String, col As String) As Long
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets(sheetName)
-    GetLastRowIndex = ws.Cells(ws.Rows.Count, col).End(xlUp).Row
-End Function
-`;
-
-const loopThroughRange = `Sub LoopThroughRange(startCell As String, endCell As String)
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("Sheet1") ' Change to your sheet name
-    Dim cell As Range
-
-    For Each cell In ws.Range(startCell & ":" & endCell)
-        Debug.Print cell.Address & " - Value: " & cell.Value
-    Next cell
-End Sub
-`;
-
-const loopThroughColumn = `Sub LoopThroughColumn(sheetName As String, col As String)
-    Dim lastRow As Long
-    lastRow = GetLastRowIndex(sheetName, col)
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets(sheetName)
-    Dim i As Long
-
-    For i = 1 To lastRow
-        Debug.Print ws.Cells(i, col).Address & " - Value: " & ws.Cells(i, col).Value
-    Next i
-End Sub
-`;
+`
 
 const ClassManager = `
 ' Private variables
@@ -296,26 +266,166 @@ Sub ListAllEntries()
         ScheduleManager.ListSchedules
     End If
 End Sub
-
 `;
+
+const filter_range = `Sub FilterRange(sheetName As String, column As Integer, criteria As String)
+    Worksheets(sheetName).UsedRange.AutoFilter Field:=column, Criteria1:=criteria
+End Sub
+`
+
+const user_input_box = `Sub ShowInputBox()
+    Dim userInput As String
+    userInput = InputBox("Enter a value:", "Input")
+    MsgBox "You entered: " & userInput
+End Sub
+`
+
+const protect_workbook = `Sub ProtectWorkbook(password As String)
+    ThisWorkbook.Protect Password:=password
+End Sub
+`
+
+const unprotect_workbook = `Sub UnprotectWorkbook(password As String)
+    ThisWorkbook.Unprotect Password:=password
+End Sub
+`
+
+const error_handling_template = `Sub SimpleErrorHandling()
+    On Error Resume Next
+    ' Your code here
+    If Err.Number <> 0 Then
+        MsgBox "Error occurred: " & Err.Description
+    End If
+    On Error GoTo 0
+End Sub
+`
+
+const pause = `Sub PauseCode(seconds As Double)
+    Dim endTime As Double
+    endTime = Timer + seconds
+    Do While Timer < endTime
+        DoEvents
+    Loop
+End Sub
+`
+
+const measure_execution_time = `Sub MeasureExecutionTime()
+    Dim startTime As Double, endTime As Double
+    startTime = Timer
+    
+    ' Your code here
+    
+    endTime = Timer
+    MsgBox "Execution Time: " & (endTime - startTime) & " seconds"
+End Sub
+`
+
+const open_workbook_with_dialoge = `Sub OpenWorkbook()
+    Dim wb As Workbook
+    Dim filePath As String
+
+    On Error GoTo ErrorHandler
+
+    ' Open File Dialog to Select Workbook
+    With Application.FileDialog(msoFileDialogOpen)
+        .AllowMultiSelect = False
+        .Filters.Clear
+        .Filters.Add "Excel Files", "*.xls; *.xlsx; *.xlsm"
+        If .Show = -1 Then
+            filePath = .SelectedItems(1)
+        Else
+            MsgBox "No file selected.", vbExclamation, "Action Cancelled"
+            Exit Sub
+        End If
+    End With
+
+    ' Open Selected Workbook
+    Set wb = Workbooks.Open(filePath)
+    MsgBox "Workbook successfully opened: " & wb.Name, vbInformation, "Success"
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "Error: " & Err.Description, vbCritical, "Failed to Open Workbook"
+End Sub
+`
+
+const load_data_from_seperate_sheet = `Sub TestLoopThroughSheetData()
+    Dim filePath As String
+    Dim sheetName As String
+
+    filePath = "C:\Path\To\Your\File.xlsx" ' Replace with your file path
+    sheetName = "Sheet1"                   ' Replace with your sheet name
+
+    LoopThroughSheetData filePath, sheetName
+End Sub
+
+
+Sub LoopThroughSheetData(filePath As String, sheetName As String)
+    Dim wb As Workbook
+    Dim ws As Worksheet
+    Dim rng As Range
+    Dim cell As Range
+
+    On Error GoTo ErrorHandler
+
+    ' Check if File Exists
+    If Dir(filePath) = "" Then
+        MsgBox "The specified file does not exist: " & filePath, vbCritical, "File Not Found"
+        Exit Sub
+    End If
+
+    ' Open Workbook
+    Set wb = Workbooks.Open(filePath)
+
+    ' Check if Sheet Exists
+    On Error Resume Next
+    Set ws = wb.Sheets(sheetName)
+    On Error GoTo ErrorHandler
+    If ws Is Nothing Then
+        MsgBox "The specified sheet does not exist in the workbook: " & sheetName, vbCritical, "Sheet Not Found"
+        wb.Close SaveChanges:=False
+        Exit Sub
+    End If
+
+    ' Loop Through Used Range
+    Set rng = ws.UsedRange
+    For Each cell In rng
+        Debug.Print "Row: " & cell.Row & ", Column: " & cell.Column & ", Value: " & cell.Value
+    Next cell
+
+    MsgBox "Data looped successfully in sheet: " & sheetName, vbInformation, "Success"
+    wb.Close SaveChanges:=False
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "Error: " & Err.Description, vbCritical, "Operation Failed"
+    If Not wb Is Nothing Then wb.Close SaveChanges:=False
+End Sub
+`
 
 // Group the snippets in an object
 const snippets = {
-    "Hello World": snippet1,
-    "Add Numbers": snippet2,
-    "Loop Through Cells": snippet3,
-    "Format Cells": snippet4,
-    "Auto Fit Columns": snippet5,
-    "Copy Range": snippet6,
-    "Delete Empty Rows": snippet7,
-    "Create Chart": snippet8,
-    "Find and Replace": snippet9,
-    "Get Sum of Range": snippet10,
-    "Get Last Row Index": getLastRowIndex,
-    "Loop Through Range": loopThroughRange,
-    "Loop Through Column": loopThroughColumn,
+    "Subroutine Template": sub_template,
+    "Function Template": function_template,
+    "Add Sheet": add_sheet,
+    "Delete Sheet": delete_sheet,
+    "Loop Worksheets": loop_worksheets,
+    "Set Cell Value": set_cell_value,
+    "Loop Range": loop_range,
+    "Find & Replace": find_and_replace,
+    "Sort Range": sort_range,
+    "Filter Range": filter_range,
     "Class Manager": ClassManager,
     "Setup Main": SetupMain,
+    "User Input": user_input_box,
+    "Protect Workbook": protect_workbook,
+    "Unprotect Workbook": unprotect_workbook,
+    "Error Handling Template": error_handling_template,
+    "Pause" : pause,
+    "Measure Execution Time": measure_execution_time, 
+    "Open Workbook W/ Dialoge": open_workbook_with_dialoge,
+    "Load Data from Seperate File": load_data_from_seperate_sheet,
+    
 };
 
 // Initialize the snippet manager
